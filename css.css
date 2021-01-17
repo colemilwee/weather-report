@@ -1,0 +1,56 @@
+header{
+    background-color: rgb(31, 38, 49);
+    font-size: 40px;
+    text-align: center;
+    padding: 20px;
+    color: white;
+}
+
+.form-group{
+padding-top: 20px;
+    float: left;
+
+}
+
+label{
+    font-size: 24px;
+}
+
+#stats{
+    float: right;
+    border: black;
+    padding-right: 500px;
+    border: solid;
+}
+
+header{
+    font-size: 40px;
+}
+
+p{
+    font-size: 20px;
+}
+
+.column {
+    float: left;
+    width: 25%;
+    padding: 0 10px;
+    background-color: rgb(114, 160, 235);
+  }
+  
+  .row 
+  {margin: 0 -5px;}
+
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    text-align: center;
+    
+  }

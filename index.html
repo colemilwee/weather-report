@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather report</title>
+    <link rel="stylesheet" href="css.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+</head>
+
+<body>
+    <header>
+        Weather Dashboard
+    </header>
+
+    <div class="container">
+        <div class="form-group">
+            <label for="srch">Search for a city</label>
+            <input type="text" class="form-control" id="srch">
+            <button id="srchBtn" class="btn btn-primary">Search Weather</button>
+            <div class="column">
+                <button id="Hbtn1" class="btn btn-primary"></button>
+                <button id="Hbtn2" class="btn btn-primary"></button>
+                <button id="Hbtn3" class="btn btn-primary"></button>
+                <button id="Hbtn4" class="btn btn-primary"></button>
+                <button id="Hbtn5" class="btn btn-primary"></button>
+                <button id="Hbtn6" class="btn btn-primary"></button>
+                <button id="Hbtn7" class="btn btn-primary"></button>
+                <button id="Hbtn8" class="btn btn-primary"></button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="card-body">
+            <h1 id="citydisp">City</h1>
+            <p id="tmp">Temperature:</p>
+            <p id="hum">Humidity:</p>
+            <p id="ws">Wind Speed:</p>
+            <p if="uvdisp">UV:</p>
+        </div>
+        <div class="row">
+            <div class="column">
+                <div class="card">
+                    <h3 id="time1"></h3>
+                    <p id="ftemp1"></p>
+                    <p id="fhumid1"></p>
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="card">
+                    <h3 id="time2"></h3>
+                    <p id="ftemp2"></p>
+                    <p id="fhumid2"></p>
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="card">
+                    <h3 id="time3"></h3>
+                    <p id="ftemp3"></p>
+                    <p id="fhumid3"></p>
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="card">
+                    <h3 id="time4"></h3>
+                    <p id="ftemp4"></p>
+                    <p id="fhumid4"></p>
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="card">
+                    <h3 id="time5"></h3>
+                    <p id="ftemp5"></p>
+                    <p id="fhumid5"></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+        let history = JSON.parse(localStorage.getItem("history")) || ["", "", "", "", "", "", "", "", ""]
+        var long = 0;
+        var lat = 0;
+        function update_buttons() {
+            for (let i = 0; i < history.length; i++) {
+                $("#Hbtn" + (i + 1)).html(history[i]);
+            }
+        }
+        update_buttons()
+
+        function String_build_place(place) {
+            var city_call = "https://api.openweathermap.org/data/2.5/weather?q="
+            temp = city_call + place
+            temp = temp + "&appid=942004f88db8f612fb1c24a7d65daa27"
+
+            return (temp)
+
+        }
+        function String_build_place_forcast(place) {
+            var city_call = "http://api.openweathermap.org/data/2.5/forecast?q="
+            temp = city_call + place
+            temp = temp + "&appid=942004f88db8f612fb1c24a7d65daa27"
+            console.log(temp)
+            return (temp)
+
+        }
+        function String_build_UV(lon, lat) {
+            var uv_call = "http://api.openweathermap.org/data/2.5/uvi?q="
+            temp = uv_call + "lat=" + lat + "&" + "lon=" + lon;
+            temp = temp + "&appid=942004f88db8f612fb1c24a7d65daa27"
+
+            return (temp)
+
+        }
+
+        function place_api_call(test) {
+            var temp;
+            var settings = {
+                "async": false,
+                "crossDomain": true,
+                "url": test,
+                "method": "GET",
+            }
+            $.ajax(settings).done(function (response) {
+                temp = response;
+            });
+            return temp
+
+        }
+
+        function display(response) {
+            console.log(response)
+            document.getElementById("citydisp").innerHTML = response.name;
+            var temp = Number(response.main.temp) - 273.15;
+            document.getElementById("tmp").innerHTML = "Temperature: " + temp.toFixed(2).toString() + " C";
+            document.getElementById("hum").innerHTML = "Humidity: " + response.main.humidity;
+            document.getElementById("ws").innerHTML = "Wind speed: " + response.wind.speed;
+
+
+        }
+        function display_forcast(response) {
+            var forcast_array = [];
+            for (let i = 0; i < response.list.length; i = i + 8) {
+                var forcast_object = {
+                    name: response.city.name,
+                    date: response.list[i].dt_txt,
+                    temperature: response.list[i].main.temp,
+                    humidity: response.list[i].main.humidity
+                }
+                forcast_array.push(forcast_object)
+            }
+
+            for (let i = 0; i < forcast_array.length; i++) {
+                document.getElementById("time" + (i + 1)).innerHTML = forcast_array[i].name + " " + forcast_array[i].date;
+                var temp = Number(forcast_array[i].temperature) - 273.15;
+                document.getElementById("ftemp" + (i + 1)).innerHTML = "Temperature: " + temp.toFixed(2).toString() + " C";
+                document.getElementById("fhumid" + (i + 1)).innerHTML = "humidity: " + forcast_array[i].humidity;
+            }
+        }
+        var btn = document.getElementById("srchBtn");
+
+        btn.addEventListener("click", search_city);
+
+        function search_city() {
+            history.unshift(document.getElementById("srch").value)
+            while (history.length > 8) {
+                history.pop();
+            }
+            localStorage.setItem("history",JSON.stringify(history))
+            console.log(history)
+            update_buttons()
+            display(place_api_call(String_build_place(document.getElementById("srch").value)))
+            display_forcast(place_api_call(String_build_place_forcast(document.getElementById("srch").value)))
+        }
+        Hbtn1.addEventListener("click", function () {
+            search_history($("#Hbtn1").text())
+        })
+        Hbtn2.addEventListener("click", function () {
+            search_history($("#Hbtn2").text())
+        })
+        Hbtn3.addEventListener("click", function () {
+            search_history($("#Hbtn3").text())
+        })
+        Hbtn4.addEventListener("click", function () {
+            search_history($("#Hbtn4").text())
+        })
+        Hbtn5.addEventListener("click", function () {
+            search_history($("#Hbtn5").text())
+        })
+        Hbtn6.addEventListener("click", function () {
+            search_history($("#Hbtn6").text())
+        })
+        Hbtn7.addEventListener("click", function () {
+            search_history($("#Hbtn7").text())
+        })
+        Hbtn8.addEventListener("click", function () {
+            search_history($("#Hbtn8").text())
+        })
+        function search_history(input) {
+            display(place_api_call(String_build_place(input)))
+            display_forcast(place_api_call(String_build_place_forcast(input)))
+        }
+    </script>
+</body>
+
+</html>
